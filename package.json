@@ -1,6 +1,6 @@
 {
   "name": "zelda",
-  "description": "Automatically `npm link` all your modules together!",
+  "description": "Automatically `npm link` all your packages together!",
   "version": "1.0.1",
   "author": {
     "name": "Feross Aboukhadijeh",
