@@ -1,4 +1,4 @@
-# zelda
+# zelda [![npm](http://img.shields.io/npm/v/zelda.svg)](https://npmjs.org/package/webtorrent) [![npm](http://img.shields.io/npm/dm/zelda.svg)](https://npmjs.org/package/webtorrent)
 
 Automatically `npm link` all your modules together!
 
@@ -6,7 +6,7 @@ Automatically `npm link` all your modules together!
 
 Sometimes Link needs a little help from Zelda.
 
-## usage
+### usage
 
 1. Install it globally.
 
