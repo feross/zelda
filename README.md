@@ -2,7 +2,7 @@
 
 Automatically `npm link` all your modules together!
 
-![link spin attack](img/link-attack.jpg)
+![link spin attack](https://raw.githubusercontent.com/feross/zelda/master/img/link-attack.jpg)
 
 Sometimes Link needs a little help from Zelda.
 
@@ -56,7 +56,7 @@ Gone are the days of running tons of `npm link` commands by hand!
 
 ### link is better with zelda!
 
-![link](img/link-zelda.png)
+![link](https://raw.githubusercontent.com/feross/zelda/master/img/link-zelda.png)
 
 ## License
 
