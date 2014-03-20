@@ -58,6 +58,6 @@ Gone are the days of running tons of `npm link` commands by hand!
 
 ![link](https://raw.githubusercontent.com/feross/zelda/master/img/link-zelda.png)
 
-## License
+### license
 
 MIT. Copyright [Feross Aboukhadijeh](https://www.twitter.com/feross).
