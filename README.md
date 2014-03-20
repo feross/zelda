@@ -4,9 +4,9 @@ Automatically `npm link` all your modules together!
 
 ![link spin attack](img/link-attack.jpg)
 
-Sometimes Link just needs a little help from Zelda.
+Sometimes Link needs a little help from Zelda.
 
-### usage
+## usage
 
 1. Install it globally.
 
@@ -14,13 +14,13 @@ Sometimes Link just needs a little help from Zelda.
   npm install -g zelda
   ```
 
-2. Run `zelda` from your project folder. Pass it a single argument -- the directory where all your code lives.
+2. Run `zelda` from your node project directory. Pass it a single argument -- the directory where all your code lives.
 
   ```bash
   zelda ~/code
   ```
 
-`zelda` finds all the node packages in your code folder (`~/code/` in the example). If it finds any of these packages listed as a dependency in the nearest `package.json` of your current directory, it automatically symlinks it for you.
+`zelda` finds all the node packages in your code folder (`~/code/` in the example). If any of these packages are listed as a dependency in the nearest `package.json` of your working directory, it automatically symlinks it for you.
 
 ### what you might do if you're clever
 
