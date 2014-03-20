@@ -1,0 +1,39 @@
+{
+  "name": "zelda",
+  "description": "Automatically `npm link` all your modules together!",
+  "version": "1.0.0",
+  "author": {
+    "name": "Feross Aboukhadijeh",
+    "email": "feross@feross.org",
+    "url": "http://feross.org/"
+  },
+  "bin": "./zelda.js",
+  "bugs": {
+    "url": "https://github.com/feross/zelda/issues"
+  },
+  "dependencies": {
+    "async": "~0.2.10",
+    "find-root": "~0.1.1",
+    "rm-r": "~1.0.2"
+  },
+  "homepage": "https://github.com/feross/zelda/",
+  "keywords": [
+    "npm link",
+    "recursive",
+    "all",
+    "automatic",
+    "npm link everything",
+    "zelda",
+    "mad science"
+  ],
+  "license": "MIT",
+  "main": "zelda.js",
+  "preferGlobal": true,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/feross/zelda.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
