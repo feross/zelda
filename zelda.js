@@ -9,7 +9,20 @@ var remove = require('rm-r/sync')
 
 var codeFolder = process.argv[2]
 
-var entries = fs.readdirSync(codeFolder)
+function usage () {
+  console.error('Usage: zelda <code-folder>\n<code-folder> = the folder where all your packages live!')
+}
+if (!codeFolder) {
+  return usage()
+}
+
+var entries
+try {
+  entries = fs.readdirSync(codeFolder)
+} catch (e) {
+  console.error('Could not read folder "' + codeFolder + '"')
+  return usage()
+}
 var myPackages = {}
 entries.forEach(function (entry) {
   try {
