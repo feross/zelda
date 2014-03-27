@@ -1,6 +1,6 @@
 # zelda [![npm](http://img.shields.io/npm/v/zelda.svg)](https://npmjs.org/package/zelda) [![npm](http://img.shields.io/npm/dm/zelda.svg)](https://npmjs.org/package/zelda)
 
-Automatically `npm link` all your packages together!
+#### Automatically `npm link` all your packages together!
 
 ![link spin attack](https://raw.githubusercontent.com/feross/zelda/master/img/link-attack.jpg)
 
