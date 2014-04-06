@@ -7,7 +7,9 @@
     "email": "feross@feross.org",
     "url": "http://feross.org/"
   },
-  "bin": "./zelda.js",
+  "bin": {
+    "zelda": "./zelda.js"
+  },
   "bugs": {
     "url": "https://github.com/feross/zelda/issues"
   },
