@@ -17,8 +17,10 @@ if (!codeFolder) {
 }
 
 var entries
+var root = findRoot(process.cwd())
+
 try {
-  entries = fs.readdirSync(codeFolder)
+  entries = fs.readdirSync(path.resolve(root, codeFolder));
 } catch (e) {
   console.error('Could not read folder "' + codeFolder + '"')
   return usage()
@@ -32,8 +34,6 @@ entries.forEach(function (entry) {
     // ignore folders that don't contain package.json -- they're not node packages
   }
 })
-
-var root = findRoot(process.cwd())
 
 var pkg
 try {
