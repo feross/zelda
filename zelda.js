@@ -19,8 +19,10 @@ if (!codeFolder) {
 var entries
 var root = findRoot(process.cwd())
 
+codeFolder = path.resolve(root, codeFolder)
+
 try {
-  entries = fs.readdirSync(path.resolve(root, codeFolder));
+  entries = fs.readdirSync(codeFolder)
 } catch (e) {
   console.error('Could not read folder "' + codeFolder + '"')
   return usage()
