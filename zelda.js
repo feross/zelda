@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-var async = require('async')
 var cp = require('child_process')
 var findRoot = require('find-root')
 var fs = require('fs')
+var series = require('run-series')
 var path = require('path')
 var remove = require('rm-r/sync')
 
@@ -17,9 +17,9 @@ if (!codeFolder) {
 }
 
 var entries
-var root = findRoot(process.cwd())
+var packageRoot = findRoot(process.cwd())
 
-codeFolder = path.resolve(root, codeFolder)
+codeFolder = path.resolve(packageRoot, codeFolder)
 
 try {
   entries = fs.readdirSync(codeFolder)
@@ -37,69 +37,86 @@ entries.forEach(function (entry) {
   }
 })
 
-var pkg
-try {
-  pkg = require(path.join(root, 'package.json'))
-} catch (e) {
-  console.log('Could not find a package.json -- must run command from inside a node project')
-}
+zelda(packageRoot)
 
-var deps = []
-
-;['dependencies', 'devDependencies', 'optionalDependencies'].forEach(function (depType) {
-  if (typeof pkg[depType] === 'object') {
-    deps.push.apply(deps, Object.keys(pkg[depType]))
+function zelda (root, done) {
+  var pkg
+  try {
+    pkg = require(path.join(root, 'package.json'))
+  } catch (e) {
+    console.log('Could not find a package.json -- must run command from inside a node project')
   }
-})
 
-try {
-  fs.mkdirSync('node_modules')
-} catch (e) {
-  // ignore -- node_modules already exists
-}
+  var deps = []
 
-async.eachSeries(deps, function (dep, cb) {
-  if (myPackages[dep]) {
-    var src = path.resolve(codeFolder, myPackages[dep])
-    var dst = path.join(process.cwd(), 'node_modules', dep)
-
-    try {
-      remove(dst)
-    } catch (e) {
-      // ignore -- nothing to remove
+  ;['dependencies', 'devDependencies', 'optionalDependencies'].forEach(function (depType) {
+    if (typeof pkg[depType] === 'object') {
+      deps.push.apply(deps, Object.keys(pkg[depType]))
     }
-    try {
-      fs.symlinkSync(src, dst)
-      console.log('creating... ' + dep + ' = ' + dst)
-    } catch (e) {
-      console.log('using existing symlink... ' + dst)
-      // ignore -- symlink already exists
-    }
+  })
 
-    npmInstall(src, cb)
-  } else {
-    cb(null)
+  try {
+    fs.mkdirSync(path.join(root, 'node_modules'))
+  } catch (e) {
+    // ignore -- node_modules already exists
   }
-}, function (err) {
-  if (err) throw err
-  npmInstall(root, function (err) {
+
+  var linkedDeps = []
+  series(deps.map(function (dep) {
+    return function (cb) {
+      if (myPackages[dep]) {
+        var src = path.resolve(codeFolder, myPackages[dep])
+        var dst = path.join(root, 'node_modules', dep)
+
+        try {
+          remove(dst)
+        } catch (e) {
+          // ignore -- nothing to remove
+        }
+
+        try {
+          fs.symlinkSync(src, dst)
+          console.log('creating... ' + dep + ' = ' + dst)
+        } catch (e) {
+          console.log('using existing symlink... ' + dst)
+          // ignore -- symlink already exists
+        }
+
+        linkedDeps.push(dep)
+        npmInstall(src, cb)
+      } else {
+        cb(null)
+      }
+    }
+  }), function (err) {
     if (err) throw err
-    console.log('all done!')
+    npmInstall(root, function (err) {
+      if (err) throw err
+      if (linkedDeps.length === 0) {
+        done()
+      } else {
+        var tasks = linkedDeps.map(function (linkedDep) {
+          return function (cb) {
+            zelda(path.join(root, 'node_modules', linkedDep), cb)
+          }
+        })
+        series(tasks, done)
+      }
+    })
   })
-})
 
-function npmInstall (cwd, cb) {
-  var pkgName = path.basename(cwd)
-  console.log('npm installing ' + pkgName + ' deps')
+  function npmInstall (cwd, cb) {
+    var pkgName = path.basename(cwd)
+    console.log('npm installing ' + pkgName + ' deps')
 
-  var child = cp.spawn('npm', ['install'], { cwd: cwd })
+    var child = cp.spawn('npm', ['install'], { cwd: cwd })
 
-  child.stdout.pipe(process.stdout)
-  child.stderr.pipe(process.stderr)
+    child.stdout.pipe(process.stdout)
+    child.stderr.pipe(process.stderr)
 
-  child.on('close', function () {
-    cb(null)
-  })
-  child.on('error', cb)
+    child.on('close', function () {
+      cb(null)
+    })
+    child.on('error', cb)
+  }
 }
-

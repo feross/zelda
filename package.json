@@ -14,9 +14,9 @@
     "url": "https://github.com/feross/zelda/issues"
   },
   "dependencies": {
-    "async": "~0.2.10",
     "find-root": "~0.1.1",
-    "rm-r": "~1.0.2"
+    "rm-r": "~1.0.2",
+    "run-series": "^1.0.2"
   },
   "homepage": "https://github.com/feross/zelda/",
   "keywords": [
