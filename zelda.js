@@ -37,7 +37,13 @@ entries.forEach(function (entry) {
   }
 })
 
-zelda(packageRoot)
+zelda(packageRoot, function(err) {
+  if(err) {
+    console.error(err);
+  } else {
+    console.log('Done!');
+  }
+})
 
 function zelda (root, done) {
   var pkg
