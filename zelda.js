@@ -3,16 +3,32 @@
 var cp = require('child_process')
 var findRoot = require('find-root')
 var fs = require('fs')
-var uniq = require('lodash.uniq')
+var minimist = require('minimist')
 var path = require('path')
 var rimraf = require('rimraf')
 var series = require('run-series')
+var uniq = require('lodash.uniq')
 
-var codeFolder = process.argv[2]
+var argv = minimist(process.argv.slice(2), {
+  alias: {
+    s: 'skip-install',
+  },
+  boolean: [ // options that are always boolean
+    'skip-install'
+  ]
+})
 
 function usage () {
-  console.error('Usage: zelda <code-folder>\n<code-folder> = the folder where all your packages live!')
+  console.log('Usage: zelda CODE_DIR [OPTIONS]')
+  console.log('')
+  console.log('CODE-DIR = the folder where all your packages live')
+  console.log('')
+  console.log('OPTIONS:')
+  console.log(' -s, --skip-install  do not run `npm install` on linked packages')
+  console.log('')
 }
+
+var codeFolder = argv._[0]
 
 if (!codeFolder) {
   return usage()
@@ -43,6 +59,11 @@ var toInstall = []
 
 zelda(packageRoot, function (err) {
   if (err) return console.error(err.stack || err.message || err)
+
+  if (argv['skip-install']) {
+    console.log('Done! (skipping `npm install`)')
+    return
+  }
 
   // npm install everything
   toInstall = uniq(toInstall)
