@@ -3,15 +3,17 @@
 var cp = require('child_process')
 var findRoot = require('find-root')
 var fs = require('fs')
-var series = require('run-series')
+var uniq = require('lodash.uniq')
 var path = require('path')
-var remove = require('rm-r/sync')
+var rimraf = require('rimraf')
+var series = require('run-series')
 
 var codeFolder = process.argv[2]
 
 function usage () {
   console.error('Usage: zelda <code-folder>\n<code-folder> = the folder where all your packages live!')
 }
+
 if (!codeFolder) {
   return usage()
 }
@@ -37,12 +39,21 @@ entries.forEach(function (entry) {
   }
 })
 
-zelda(packageRoot, function(err) {
-  if(err) {
-    console.error(err);
-  } else {
-    console.log('Done!');
-  }
+var toInstall = []
+
+zelda(packageRoot, function (err) {
+  if (err) return console.error(err.stack || err.message || err)
+
+  // npm install everything
+  toInstall = uniq(toInstall)
+  series(toInstall.map(function (dep) {
+    return function (cb) {
+      npmInstall(path.join(codeFolder, myPackages[dep]), cb)
+    }
+  }), function (err) {
+    if (err) return console.error(err.stack || err.message || err)
+    else console.log('Done!')
+  })
 })
 
 function zelda (root, done) {
@@ -50,8 +61,11 @@ function zelda (root, done) {
   try {
     pkg = require(path.join(root, 'package.json'))
   } catch (e) {
-    console.log('Could not find a package.json -- must run command from inside a node project')
+    done(new Error('Could not find a package.json -- must run command from inside a node project'))
+    return
   }
+
+  toInstall.push(pkg.name)
 
   var deps = []
 
@@ -68,61 +82,46 @@ function zelda (root, done) {
   }
 
   var linkedDeps = []
-  series(deps.map(function (dep) {
-    return function (cb) {
-      if (myPackages[dep]) {
-        var src = path.resolve(codeFolder, myPackages[dep])
-        var dst = path.join(root, 'node_modules', dep)
+  deps.forEach(function (dep) {
+    if (myPackages[dep]) {
+      var src = path.resolve(codeFolder, myPackages[dep])
+      var dst = path.join(root, 'node_modules', dep)
 
-        try {
-          remove(dst)
-        } catch (e) {
-          // ignore -- nothing to remove
-        }
-
-        try {
-          fs.symlinkSync(src, dst)
-          console.log('creating... ' + dep + ' = ' + dst)
-        } catch (e) {
-          console.log('using existing symlink... ' + dst)
-          // ignore -- symlink already exists
-        }
-
-        linkedDeps.push(dep)
-        npmInstall(src, cb)
-      } else {
-        cb(null)
+      try {
+        rimraf.sync(dst)
+      } catch (e) {
+        // ignore -- nothing to remove
       }
+
+      try {
+        fs.symlinkSync(src, dst)
+        console.log('NPM LINK: ' + dst + ' => ' + src)
+      } catch (e) {
+        console.log('using existing symlink... ' + dst)
+        // ignore -- symlink already exists
+      }
+
+      linkedDeps.push(dep)
+      toInstall.push(dep)
     }
-  }), function (err) {
-    if (err) throw err
-    npmInstall(root, function (err) {
-      if (err) throw err
-      if (linkedDeps.length === 0) {
-        done()
-      } else {
-        var tasks = linkedDeps.map(function (linkedDep) {
-          return function (cb) {
-            zelda(path.join(root, 'node_modules', linkedDep), cb)
-          }
-        })
-        series(tasks, done)
-      }
-    })
   })
 
-  function npmInstall (cwd, cb) {
-    var pkgName = path.basename(cwd)
-    console.log('npm installing ' + pkgName + ' deps')
+  var tasks = linkedDeps.map(function (linkedDep) {
+    return function (cb) {
+      zelda(path.join(root, 'node_modules', linkedDep), cb)
+    }
+  })
+  series(tasks, done)
+}
 
-    var child = cp.spawn('npm', ['install'], { cwd: cwd })
+function npmInstall (cwd, cb) {
+  var pkgName = path.basename(cwd)
+  console.log('NPM INSTALL: ' + pkgName, cwd)
 
-    child.stdout.pipe(process.stdout)
-    child.stderr.pipe(process.stderr)
+  var child = cp.spawn('npm', ['install'], { cwd: cwd, stdio: 'inherit' })
 
-    child.on('close', function () {
-      cb(null)
-    })
-    child.on('error', cb)
-  }
+  child.on('exit', function () {
+    cb(null)
+  })
+  child.on('error', cb)
 }

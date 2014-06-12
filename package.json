@@ -15,7 +15,8 @@
   },
   "dependencies": {
     "find-root": "~0.1.1",
-    "rm-r": "~1.0.2",
+    "lodash.uniq": "^2.4.1",
+    "rimraf": "^2.2.8",
     "run-series": "^1.0.2"
   },
   "homepage": "https://github.com/feross/zelda/",
