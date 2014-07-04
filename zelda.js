@@ -14,7 +14,8 @@ var argv = minimist(process.argv.slice(2), {
     s: 'skip-install',
   },
   boolean: [ // options that are always boolean
-    'skip-install'
+    'skip-install',
+    'unlink'
   ]
 })
 
@@ -25,7 +26,38 @@ function usage () {
   console.log('')
   console.log('OPTIONS:')
   console.log(' -s, --skip-install  do not run `npm install` on linked packages')
+  console.log(' --unlink  remove all linked packages and re-run npm install')
   console.log('')
+}
+
+var entries
+var packageRoot = findRoot(process.cwd())
+
+if (argv.unlink) {
+  var rootpkg = require(path.join(packageRoot, 'package.json'))
+
+  var deps = getDeps(rootpkg)
+
+  deps.forEach(function (dep) {
+    var dst = path.join(packageRoot, 'node_modules', dep)
+
+    if (!fs.existsSync(dst)) return
+
+    var lstat = fs.lstatSync(dst)
+    if (lstat.isSymbolicLink(dst)) {
+      rimraf.sync(dst)
+      console.log('NPM UNLINK: ' + dst)
+    }
+  })
+
+  if (argv['skip-install']) {
+    console.log('Done! (skipping `npm install`)')
+    return
+  }
+
+  return npmInstall(packageRoot, function(err) {
+    if (err) return console.error(err.stack || err.message || err)
+  })
 }
 
 var codeFolder = argv._[0]
@@ -33,9 +65,6 @@ var codeFolder = argv._[0]
 if (!codeFolder) {
   return usage()
 }
-
-var entries
-var packageRoot = findRoot(process.cwd())
 
 codeFolder = path.resolve(packageRoot, codeFolder)
 
@@ -88,13 +117,7 @@ function zelda (root, done) {
 
   toInstall.push(pkg.name)
 
-  var deps = []
-
-  ;['dependencies', 'devDependencies', 'optionalDependencies'].forEach(function (depType) {
-    if (typeof pkg[depType] === 'object') {
-      deps.push.apply(deps, Object.keys(pkg[depType]))
-    }
-  })
+  var deps = getDeps(pkg)
 
   try {
     fs.mkdirSync(path.join(root, 'node_modules'))
@@ -145,4 +168,14 @@ function npmInstall (cwd, cb) {
     cb(null)
   })
   child.on('error', cb)
+}
+
+function getDeps (pkg) {
+  var deps = []
+  ;['dependencies', 'devDependencies', 'optionalDependencies'].forEach(function (depType) {
+    if (typeof pkg[depType] === 'object') {
+      deps.push.apply(deps, Object.keys(pkg[depType]))
+    }
+  })
+  return deps
 }
