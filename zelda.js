@@ -12,6 +12,7 @@ var uniq = require('lodash.uniq')
 var argv = minimist(process.argv.slice(2), {
   alias: {
     s: 'skip-install',
+    u: 'unlink'
   },
   boolean: [ // options that are always boolean
     'skip-install',
@@ -26,7 +27,7 @@ function usage () {
   console.log('')
   console.log('OPTIONS:')
   console.log(' -s, --skip-install  do not run `npm install` on linked packages')
-  console.log(' --unlink  remove all linked packages and re-run npm install')
+  console.log(' -u, --unlink        remove all linked packages and re-run npm install')
   console.log('')
 }
 
@@ -55,9 +56,11 @@ if (argv.unlink) {
     return
   }
 
-  return npmInstall(packageRoot, function(err) {
+  npmInstall(packageRoot, function(err) {
     if (err) return console.error(err.stack || err.message || err)
   })
+
+  return
 }
 
 var codeFolder = argv._[0]
