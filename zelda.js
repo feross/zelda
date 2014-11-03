@@ -114,7 +114,7 @@ function zelda (root, done) {
   try {
     pkg = require(path.join(root, 'package.json'))
   } catch (e) {
-    done(new Error('Could not find a package.json -- must run command from inside a node project'))
+    done(new Error('Could not find a package.json in ' + root + '-- run command from inside a node project'))
     return
   }
 
