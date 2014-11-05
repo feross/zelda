@@ -163,9 +163,10 @@ function zelda (root, done) {
 
 function npmInstall (cwd, cb) {
   var pkgName = path.basename(cwd)
+  var npmExecutable = process.platform === 'win32' ? 'npm.cmd' : 'npm'
   console.log('NPM INSTALL: ' + pkgName, cwd)
 
-  var child = cp.spawn('npm', ['install'], { cwd: cwd, stdio: 'inherit' })
+  var child = cp.spawn(npmExecutable, ['install'], { cwd: cwd, stdio: 'inherit' })
 
   child.on('exit', function () {
     cb(null)
