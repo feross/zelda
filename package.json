@@ -1,7 +1,7 @@
 {
   "name": "zelda",
   "description": "Automatically `npm link` all your packages together!",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "author": {
     "name": "Feross Aboukhadijeh",
     "email": "feross@feross.org",
