@@ -7,7 +7,7 @@ var minimist = require('minimist')
 var path = require('path')
 var rimraf = require('rimraf')
 var series = require('run-series')
-var uniq = require('lodash.uniq')
+var uniq = require('uniq')
 
 var argv = minimist(process.argv.slice(2), {
   alias: {

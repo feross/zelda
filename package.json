@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "find-root": "~0.1.1",
-    "lodash.uniq": "^2.4.1",
     "minimist": "^0.1.0",
+    "uniq": "^1.0.1",
     "rimraf": "^2.2.8",
     "run-series": "^1.0.2"
   },
