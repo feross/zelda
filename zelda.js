@@ -141,7 +141,7 @@ function zelda (root, done) {
       }
 
       try {
-        fs.symlinkSync(src, dst)
+        fs.symlinkSync(src, dst, 'dir')
         console.log('NPM LINK: ' + dst + ' => ' + src)
       } catch (e) {
         console.log('using existing symlink... ' + dst)
