@@ -32,7 +32,6 @@
   ],
   "license": "MIT",
   "main": "zelda.js",
-  "preferGlobal": true,
   "repository": {
     "type": "git",
     "url": "git://github.com/feross/zelda.git"
