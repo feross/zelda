@@ -5,16 +5,20 @@ var zelda = require('../')
 
 var argv = minimist(process.argv.slice(2), {
   alias: {
-    h: 'help',
     i: 'install',
+    p: 'production',
+    h: 'help',
     v: 'version'
   },
   boolean: [
-    'help',
     'install',
     'production',
+    'help',
     'version'
-  ]
+  ],
+  default: {
+    install: true
+  }
 })
 
 if (argv.version) {
@@ -35,7 +39,8 @@ function usage () {
   console.log('CODE-DIR - the folder where all your packages live')
   console.log('')
   console.log('OPTIONS:')
-  console.log('  -h, --help     show help message')
-  console.log('  -i, --install  run `npm install` on each package')
-  console.log('  --production   only install produdction dependencies')
+  console.log('  --no-install  skip `npm install` on each package')
+  console.log('  --production  only `npm install` production dependencies')
+  console.log('  -h, --help    show help message')
+  console.log('  -v, --version    show version')
 }
