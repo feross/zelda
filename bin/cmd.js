@@ -6,14 +6,21 @@ var zelda = require('../')
 var argv = minimist(process.argv.slice(2), {
   alias: {
     h: 'help',
-    i: 'install'
+    i: 'install',
+    v: 'version'
   },
   boolean: [
     'help',
     'install',
-    'production'
+    'production',
+    'version'
   ]
 })
+
+if (argv.version) {
+  console.log(require('../package.json').version)
+  process.exit(0)
+}
 
 if (argv.help) {
   usage()
