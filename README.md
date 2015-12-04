@@ -14,19 +14,23 @@ Sometimes Link needs a little help from Zelda.
   npm install -g zelda
   ```
 
-2. Run `zelda` from your node project directory. Pass it a single argument -- the directory where all your code lives.
+2. Run `zelda` from your node project directory. For example:
 
   ```bash
-  zelda ~/code
+  cd ~/code/my-project
+  zelda
   ```
 
 `zelda` finds all the node packages in your code folder (`~/code/` in the example). If any of these packages are listed as a dependency in the nearest `package.json` of your working directory, it automatically symlinks it for you.
+
+Zelda assumes that all your code lives in the directory one level up from the folder where you run `zelda`. So, keep all your packages in a single folder like `~/code` and run `zelda` inside one of the projects (ex: `~/code/my-project`).
 
 ### what you might do if you're clever
 
 1. Clone a cool project.
 
   ```bash
+  mkdir ~/code
   cd ~/code
   git clone git@github.com:feross/webtorrent.git
   ```
@@ -43,7 +47,7 @@ Sometimes Link needs a little help from Zelda.
 
   ```bash
   cd webtorrent
-  zelda ~/code
+  zelda
   ```
 
 Gone are the days of running tons of `npm link` commands by hand!
