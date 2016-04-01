@@ -57,10 +57,10 @@ function zelda (rootPath, opts) {
     if (opts.install && pkgToPurge !== rootName) {
       npmInstall(pkgPath, opts.production)
     }
+  })
 
-    traverseNodeModules(pkgPath, function (pkgName, pkgPath) {
-      if (pkgsToPurge[pkgName]) rimraf.sync(pkgPath)
-    })
+  traverseNodeModules(rootPath, function (pkgName, pkgPath) {
+    if (pkgsToPurge[pkgName]) rimraf.sync(pkgPath)
   })
 }
 
