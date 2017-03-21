@@ -1,4 +1,13 @@
-# zelda [![npm](https://img.shields.io/npm/v/zelda.svg)](https://npmjs.org/package/zelda) [![npm](https://img.shields.io/npm/dm/zelda.svg)](https://npmjs.org/package/zelda)
+# zelda [![travis][travis-image]][travis-url] [![npm][npm-image]][npm-url] [![downloads][downloads-image]][downloads-url] [![javascript style guide][standard-image]][standard-url]
+
+[travis-image]: https://img.shields.io/travis/feross/zelda/master.svg
+[travis-url]: https://travis-ci.org/feross/zelda
+[npm-image]: https://img.shields.io/npm/v/zelda.svg
+[npm-url]: https://npmjs.org/package/zelda
+[downloads-image]: https://img.shields.io/npm/dm/zelda.svg
+[downloads-url]: https://npmjs.org/package/zelda
+[standard-image]: https://img.shields.io/badge/code_style-standard-brightgreen.svg
+[standard-url]: https://standardjs.com
 
 #### Automatically `npm link` all your packages together!
 
