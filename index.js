@@ -62,6 +62,21 @@ function zelda (rootPath, opts) {
   traverseNodeModules(rootPath, function (pkgName, pkgPath) {
     if (pkgsToPurge[pkgName]) rimraf.sync(pkgPath)
   })
+
+  // Outer loop of packages to purge
+  Object.keys(pkgsToPurge).map(function (pkgOuter) {
+    // Inner loop of packages to purge
+    Object.keys(pkgsToPurge).map(function (pkgInner) {
+      try {
+        // Check for the packages existence
+        fs.readdirSync(`${codePath}/${pkgOuter}/node_modules/${pkgInner}`)
+        console.log(`Removing '${pkgInner}' from ${codePath}/${pkgOuter}`)
+        rimraf.sync(`${codePath}/${pkgOuter}/node_modules/${pkgInner}`)
+      } catch (err) {
+        // Nothing to error out on here
+      }
+    })
+  })
 }
 
 function getCodePkgs (codePath) {
