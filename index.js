@@ -71,7 +71,7 @@ function zelda (rootPath, opts) {
         // Check for the packages existence
         fs.readdirSync(`${codePath}/${pkgOuter}/node_modules/${pkgInner}`)
         console.log(`Removing '${pkgInner}' from ${codePath}/${pkgOuter}`)
-        rimraf.sync(`${codePath}/${pkgInner}/node_modules/${pkgOuter}`)
+        rimraf.sync(`${codePath}/${pkgOuter}/node_modules/${pkgInner}`)
       } catch (err) {
         // Nothing to error out on here
       }
