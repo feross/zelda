@@ -77,7 +77,6 @@ function zelda (rootPath, opts) {
       }
     })
   })
-
 }
 
 function getCodePkgs (codePath) {
