@@ -30,9 +30,13 @@ Sometimes Link needs a little help from Zelda.
   zelda
   ```
 
-`zelda` finds all the node packages in your code folder (`~/code/` in the example). If any of these packages are listed as a dependency in the nearest `package.json` of your working directory, it automatically symlinks it for you.
+`zelda` finds all the node packages in your code folder (`~/code/` in the example).
+If any of these packages are listed as a dependency in the nearest `package.json`
+of your working directory, it automatically symlinks it for you.
 
-Zelda assumes that all your code lives in the directory one level up from the folder where you run `zelda`. So, keep all your packages in a single folder like `~/code` and run `zelda` inside one of the projects (ex: `~/code/my-project`).
+Zelda assumes that all your code lives in the directory one level up from the
+folder where you run `zelda`. So, keep all your packages in a single folder like
+`~/code` and run `zelda` inside one of the projects (ex: `~/code/my-project`).
 
 ### what you might do if you're clever
 

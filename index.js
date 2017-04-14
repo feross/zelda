@@ -10,9 +10,6 @@ var NPM_EXEC = process.platform === 'win32'
   ? 'npm.cmd'
   : 'npm'
 
-/**
- * @param  {string} rootPath path to project (ex: '~/code/my-project')
- */
 function zelda (rootPath, opts) {
   if (!opts) opts = {}
 
@@ -21,14 +18,13 @@ function zelda (rootPath, opts) {
 
   var rootName = require(path.join(rootPath, 'package.json')).name
   var codePath = path.resolve(rootPath, '..')
-  var codePathName = path.basename(codePath)
 
   if (!rootName) throw new Error('root package must have a name ')
 
   // add node_modules symlink in code folder - magic!
   try {
-    fs.symlinkSync('.', path.join(codePath, 'node_modules'), 'dir')
-    console.log('[zelda] Created symlink . => ' + codePathName + '/node_modules')
+    console.log('[zelda] cd ' + codePath + ' && ln -s . node_modules')
+    if (!opts['dry-run']) fs.symlinkSync('.', path.join(codePath, 'node_modules'), 'dir')
   } catch (err) {
     // ignore err (symlink already exists)
   }
@@ -36,47 +32,52 @@ function zelda (rootPath, opts) {
   // get packages in code folder
   var codePkgs = getCodePkgs(codePath)
 
-  if (opts.install) npmInstall(rootPath, opts.production)
+  if (opts.install) npmInstall(rootPath)
 
   var pkgsToPurge = {}
-  traverseNodeModules(rootPath, function (pkgName, pkgPath) {
-    if (codePkgs[pkgName]) pkgsToPurge[pkgName] = true
-  })
-
-  var len = Object.keys(pkgsToPurge).length
-  console.log('[zelda] Found ' + len + ' local packages for ' + rootName)
-  Object.keys(pkgsToPurge).forEach(function (pkgToPurge) {
-    console.log('  - ' + pkgToPurge)
-  })
-
   pkgsToPurge[rootName] = true
 
-  Object.keys(pkgsToPurge).forEach(function (pkgToPurge) {
-    var pkgPath = path.join(codePath, pkgToPurge)
-
-    if (opts.install && pkgToPurge !== rootName) {
-      npmInstall(pkgPath, opts.production)
+  traverseNodeModules(rootPath, function (pkgName, pkgPath) {
+    if (codePkgs[pkgName]) {
+      pkgsToPurge[pkgName] = true
+      if (opts.install) npmInstall(path.join(codePath, pkgName))
     }
   })
 
   traverseNodeModules(rootPath, function (pkgName, pkgPath) {
-    if (pkgsToPurge[pkgName]) rimraf.sync(pkgPath)
+    if (pkgsToPurge[pkgName]) {
+      rmDir(pkgPath)
+    }
   })
 
-  // Outer loop of packages to purge
-  Object.keys(pkgsToPurge).map(function (pkgOuter) {
-    // Inner loop of packages to purge
-    Object.keys(pkgsToPurge).map(function (pkgInner) {
-      try {
-        // Check for the packages existence
-        fs.readdirSync(`${codePath}/${pkgOuter}/node_modules/${pkgInner}`)
-        console.log(`Removing '${pkgInner}' from ${codePath}/${pkgOuter}`)
-        rimraf.sync(`${codePath}/${pkgOuter}/node_modules/${pkgInner}`)
-      } catch (err) {
-        // Nothing to error out on here
-      }
+  Object.keys(pkgsToPurge).forEach(function (pkgToPurge) {
+    if (pkgToPurge === rootName) return
+
+    var pkgPath = path.join(codePath, pkgToPurge)
+    traverseNodeModules(pkgPath, function (pkgName, pkgPath) {
+      if (pkgsToPurge[pkgName]) rmDir(pkgPath)
     })
   })
+
+  function rmDir (dirPath) {
+    console.log('[zelda] rm -rf ' + dirPath)
+    if (!opts['dry-run']) rimraf.sync(dirPath)
+  }
+
+  function npmInstall (pkgPath) {
+    console.log('[zelda] cd ' + pkgPath + ' && rm node_modules/ && npm install')
+
+    var args = ['install']
+    if (opts.production) args.push('--production')
+
+    if (!opts['dry-run']) {
+      rimraf.sync(path.join(pkgPath, 'node_modules'))
+      cp.spawnSync(NPM_EXEC, args, {
+        cwd: pkgPath,
+        stdio: 'inherit'
+      })
+    }
+  }
 }
 
 function getCodePkgs (codePath) {
@@ -101,19 +102,6 @@ function getCodePkgs (codePath) {
   })
 
   return pkgs
-}
-
-function npmInstall (pkgPath, production) {
-  console.log('[zelda] npm install ' + path.basename(pkgPath))
-  rimraf.sync(path.join(pkgPath, 'node_modules'))
-
-  var args = ['install']
-  if (production) args.push('--production')
-
-  cp.spawnSync(NPM_EXEC, args, {
-    cwd: pkgPath,
-    stdio: 'inherit'
-  })
 }
 
 function traverseNodeModules (pkgPath, fn) {
