@@ -12,7 +12,7 @@
     "url": "https://github.com/feross/zelda/issues"
   },
   "dependencies": {
-    "find-root": "~0.1.1",
+    "find-root": "~1.1.0",
     "minimist": "^1.1.0",
     "rimraf": "^2.2.8",
     "run-parallel": "^1.1.4",
