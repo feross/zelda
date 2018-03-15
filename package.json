@@ -20,7 +20,7 @@
     "uniq": "^1.0.1"
   },
   "devDependencies": {
-    "standard": "*"
+    "standard": "11.0.0"
   },
   "homepage": "https://github.com/feross/zelda/",
   "keywords": [
