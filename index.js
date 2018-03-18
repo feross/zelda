@@ -11,15 +11,14 @@ var NPM_EXEC = process.platform === 'win32'
   : 'npm'
 var YARN_EXEC = process.platform === 'win32'
   ? 'yarn.cmd'
-  : 'yarn';
+  : 'yarn'
 
-var PKG_MGR_EXEC = NPM_EXEC;
+var PKG_MGR_EXEC = NPM_EXEC
 
 function zelda (rootPath, opts) {
   if (!opts) opts = {}
-  
   if (opts.yarn) {
-    PKG_MGR_EXEC = YARN_EXEC;
+    PKG_MGR_EXEC = YARN_EXEC
   }
 
   // Use folder with nearest package.json as root
