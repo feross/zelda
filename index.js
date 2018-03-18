@@ -13,7 +13,7 @@ var YARN_EXEC = process.platform === 'win32'
   ? 'yarn.cmd'
   : 'yarn';
 
-var PKG_MGR_EXEC = 'npm';
+var PKG_MGR_EXEC = NPM_EXEC;
 
 function zelda (rootPath, opts) {
   if (!opts) opts = {}
