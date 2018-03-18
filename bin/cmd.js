@@ -45,6 +45,6 @@ function usage () {
   console.log('  --no-install   skip `npm install` on each package')
   console.log('  --production   only `npm install` production dependencies')
   console.log('  -h, --help     show help message')
-  console.log('  -v, --version  show version'),
+  console.log('  -v, --version  show version')
   console.log('  -y, --yarn  use yarn instead of npm')
 }
