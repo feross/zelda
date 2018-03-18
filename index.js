@@ -9,9 +9,17 @@ var rimraf = require('rimraf')
 var NPM_EXEC = process.platform === 'win32'
   ? 'npm.cmd'
   : 'npm'
+var YARN_EXEC = process.platform === 'win32'
+  ? 'yarn.cmd'
+  : 'yarn'
+
+var PKG_MGR_EXEC = NPM_EXEC
 
 function zelda (rootPath, opts) {
   if (!opts) opts = {}
+  if (opts.yarn) {
+    PKG_MGR_EXEC = YARN_EXEC
+  }
 
   // Use folder with nearest package.json as root
   rootPath = findRoot(rootPath)
@@ -65,14 +73,14 @@ function zelda (rootPath, opts) {
   }
 
   function npmInstall (pkgPath) {
-    console.log('[zelda] cd ' + pkgPath + ' && rm node_modules/ && npm install')
+    console.log(`[zelda] cd ' + pkgPath + ' && rm node_modules/ && ${PKG_MGR_EXEC} install`)
 
     var args = ['install']
     if (opts.production) args.push('--production')
 
     if (!opts['dry-run']) {
       rimraf.sync(path.join(pkgPath, 'node_modules'))
-      cp.spawnSync(NPM_EXEC, args, {
+      cp.spawnSync(PKG_MGR_EXEC, args, {
         cwd: pkgPath,
         stdio: 'inherit'
       })

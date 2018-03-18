@@ -8,13 +8,15 @@ var argv = minimist(process.argv.slice(2), {
     i: 'install',
     p: 'production',
     h: 'help',
-    v: 'version'
+    v: 'version',
+    y: 'yarn'
   },
   boolean: [
     'install',
     'production',
     'help',
-    'version'
+    'version',
+    'yarn'
   ],
   default: {
     install: true
@@ -44,4 +46,5 @@ function usage () {
   console.log('  --production   only `npm install` production dependencies')
   console.log('  -h, --help     show help message')
   console.log('  -v, --version  show version')
+  console.log('  -y, --yarn  use yarn instead of npm')
 }
